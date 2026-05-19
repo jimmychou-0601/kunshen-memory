@@ -3,7 +3,7 @@
 html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto; background: #222; font-family: 'Noto Serif TC', serif; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 
 /* === APP === */
-.app { background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%); min-height: 100dvh !important; overflow-x: hidden; }
+.app { background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%); min-height: 100dvh !important; overflow-x: hidden; padding-bottom: 60px !important; }
 #radio { max-width: min(1100px, calc(100vw - 1rem)) !important; }
 
 /* === TURNTABLE CONTAINER === */
