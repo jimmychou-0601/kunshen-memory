@@ -262,14 +262,14 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 }
 
-@media (orientation: landscape) and (max-height: 520px) and (max-width: 991.98px) {
+@media (orientation: landscape) and (max-height: 620px) and (max-width: 1199.98px) {
     .app {
         padding: 6px !important;
     }
 
     #radio {
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) clamp(150px, 23vw, 210px);
+        grid-template-columns: minmax(0, 1fr) clamp(142px, 19vw, 190px);
         gap: 10px;
         height: calc(100dvh - 12px);
         align-items: stretch !important;
@@ -293,7 +293,7 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 
     .tt-platter-base {
-        max-width: min(250px, calc(52vw - 62px), calc(100dvh - 56px));
+        max-width: min(250px, calc(48vw - 62px), calc(100dvh - 56px));
     }
 
     .tonearm-assembly {
@@ -349,19 +349,19 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     .record-shelf {
         flex-direction: column !important;
         align-items: center;
-        gap: 12px !important;
+        gap: 10px !important;
         padding: 8px 6px 12px;
         overflow-x: hidden !important;
         overflow-y: auto !important;
     }
 
     .tape-thumb {
-        width: 74px;
-        height: 74px;
+        width: clamp(64px, 13dvh, 74px);
+        height: clamp(64px, 13dvh, 74px);
     }
 
     .tape-thumb::before {
-        width: 66px;
-        height: 66px;
+        width: calc(clamp(64px, 13dvh, 74px) - 8px);
+        height: calc(clamp(64px, 13dvh, 74px) - 8px);
     }
 }
