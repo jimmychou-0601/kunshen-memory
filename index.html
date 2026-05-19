@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>鯤鯓記憶</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Noto+Serif+TC:wght@400;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app">
+        <div class="turntable" id="radio">
+            
+            <!-- Turntable Wooden Base / Body -->
+            <div class="tt-body">
+                
+                <!-- Left: Platter and Tonearm -->
+                <div class="tt-platter-area">
+                    <div class="tt-platter-base">
+                        <!-- We use reelL as the spinning wrapper -->
+                        <div id="reelL" class="record-spinner">
+                            <div class="record" id="cassette">
+                                <div class="record-grooves"></div>
+                                <div class="record-label">
+                                    <div class="clabel-content">
+                                        <div class="clabel-stripe" id="labelStripe"></div>
+                                        <div class="label-text-area">
+                                            <div id="labelTitle">──</div>
+                                            <div class="label-brand">KMN RECORDS</div>
+                                            <div id="labelSide">SIDE A</div>
+                                        </div>
+                                    </div>
+                                    <div class="spindle-hole"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="spindle"></div>
+                    </div>
+                    
+                    <!-- Tonearm Assembly -->
+                    <div class="tonearm-assembly" id="tonearm">
+                        <div class="tonearm-counterweight"></div>
+                        <div class="tonearm-base">
+                            <div class="tonearm-pivot"></div>
+                        </div>
+                        <div class="tonearm-wand"></div>
+                        <div class="tonearm-headshell">
+                            <div class="stylus"></div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden elements for JS compatibility -->
+                    <div id="reelR" style="display:none;"></div>
+                    <div id="deckEmpty" style="display:none;"></div>
+                    <div id="deckWindow" style="display:none;"></div>
+                </div>
+
+                <!-- Right: Controls -->
+                <div class="tt-controls">
+                    
+                    <div class="tt-brand">
+                        <div class="tt-brand-en">KUNSHÉN</div>
+                        <div class="tt-brand-zh">鯤鯓記憶</div>
+                    </div>
+
+                    <div class="display-box">
+                        <div class="display-track" id="dispTrack">── 選擇唱片 ──</div>
+                        <div class="display-status" id="dispStatus">◼ NO RECORD</div>
+                        <div class="power-led" id="powerLed"></div>
+                    </div>
+
+                    <div class="knob-row">
+                        <div class="knob-grp">
+                            <div class="knob" id="knobVol" data-val="70"><div class="knob-dot"></div></div>
+                            <div class="knob-lbl">VOLUME</div>
+                        </div>
+                        <div class="knob-grp">
+                            <div class="knob" id="knobTone" data-val="50"><div class="knob-dot"></div></div>
+                            <div class="knob-lbl">PITCH</div>
+                        </div>
+                    </div>
+
+                    <div class="tt-buttons">
+                        <button class="btn" id="btnRew" aria-label="上一首">
+                            <span class="btn-ico">⏮</span>
+                        </button>
+                        <button class="btn btn-play" id="btnPlay" aria-label="播放">
+                            <span class="btn-ico" id="playIco">▶</span>
+                        </button>
+                        <button class="btn" id="btnFF" aria-label="下一首">
+                            <span class="btn-ico">⏭</span>
+                        </button>
+                        <button class="btn btn-eject" id="btnEject" aria-label="退出">
+                            <span class="btn-ico">⏏</span>
+                        </button>
+                    </div>
+
+                    <div class="vu-wrap">
+                        <div class="vu-bars" id="vuBars">
+                            <div class="vu-b" data-i="1"></div>
+                            <div class="vu-b" data-i="2"></div>
+                            <div class="vu-b" data-i="3"></div>
+                            <div class="vu-b" data-i="4"></div>
+                            <div class="vu-b" data-i="5"></div>
+                            <div class="vu-b" data-i="6"></div>
+                            <div class="vu-b" data-i="7"></div>
+                            <div class="vu-b" data-i="8"></div>
+                        </div>
+                        <div class="vu-lbl">LEVEL</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ── RECORD SELECTION ── -->
+            <div class="record-crate" id="tapeBay">
+                <div class="crate-hdr">── 選擇黑膠唱片 ──</div>
+                <div class="record-shelf" id="tapeShelf"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

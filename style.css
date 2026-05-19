@@ -1,0 +1,146 @@
+/* === RESET === */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #222; font-family: 'Noto Serif TC', serif; user-select: none; -webkit-user-select: none; touch-action: manipulation; display: flex; align-items: center; justify-content: center; }
+
+/* === APP === */
+.app { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: 20px 0; background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%); }
+
+/* === TURNTABLE CONTAINER === */
+.turntable { width: min(680px, 95vw); position: relative; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); gap: 15px; }
+
+/* === TURNTABLE BODY (Wooden Plinth + Metal Face) === */
+.tt-body { width: 100%; background: linear-gradient(180deg, #d4d4d4 0%, #b0b0b0 100%); border-radius: 8px; position: relative; display: flex; box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 10px 20px rgba(0,0,0,0.5), 0 0 0 8px #5c3a21; /* Wood trim via box-shadow */ border: 1px solid #332010; z-index: 2; }
+/* Wood texture for the trim */
+.tt-body::before { content: ''; position: absolute; inset: -8px; border-radius: 12px; background: repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px); pointer-events: none; z-index: -1; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
+/* Brushed metal texture for face */
+.tt-body::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(255,255,255,0.1) 1px, rgba(255,255,255,0.1) 2px); border-radius: 8px; pointer-events: none; z-index: 1; }
+
+/* === PLATTER AREA (Left Side) === */
+.tt-platter-area { flex: 1.2; position: relative; min-height: 320px; display: flex; align-items: center; justify-content: center; z-index: 2; border-right: 1px solid #999; box-shadow: 1px 0 0 rgba(255,255,255,0.5); }
+
+/* The metallic platter */
+.tt-platter-base { width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e8e8e8, #a0a0a0 70%, #777); position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 0 0 2px #f0f0f0, inset 0 0 0 6px #ccc, inset 0 0 0 8px #888; }
+.tt-platter-base::after { content: ''; position: absolute; inset: 12px; border-radius: 50%; background: #1a1a1a; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); /* Platter mat */ }
+
+/* Spindle */
+.spindle { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #888); box-shadow: 0 2px 4px rgba(0,0,0,0.6); z-index: 20; left: 50%; top: 50%; transform: translate(-50%, -50%); border: 1px solid #555; }
+.spindle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 3px; height: 3px; background: #fff; border-radius: 50%; filter: blur(1px); }
+
+/* === RECORD === */
+.record-spinner { width: 260px; height: 260px; position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.record-spinner.spinning { animation: spinRecord 1.8s linear infinite; }
+@keyframes spinRecord { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.record { width: 100%; height: 100%; border-radius: 50%; background: #080808; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); overflow: hidden; transition: transform 0.5s cubic-bezier(0.3, 1.2, 0.5, 1); }
+/* Slide in animation for record insertion */
+.record.hidden { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.record.is-out { transform: scale(1.1) translateY(-50px); opacity: 0; }
+.record.is-inserting { animation: dropRecord 0.7s cubic-bezier(0.25,0.46,0.45,0.94) both; }
+@keyframes dropRecord { 0% { transform: scale(1.4) translateY(180px); opacity: 0; } 30% { opacity: 1; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
+
+/* Vinyl Grooves */
+.record-grooves { position: absolute; inset: 4px; border-radius: 50%; background: repeating-radial-gradient( circle at 50% 50%, transparent 0, transparent 2px, rgba(255,255,255,0.03) 3px, rgba(255,255,255,0.03) 4px ); }
+.record-grooves::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient( from 0deg, rgba(255,255,255,0.1) 0deg, transparent 40deg, rgba(255,255,255,0.1) 180deg, transparent 220deg, rgba(255,255,255,0.1) 360deg ); mix-blend-mode: screen; opacity: 0.6; pointer-events: none; }
+
+/* Record Label */
+.record-label { width: 90px; height: 90px; border-radius: 50%; background: #eee; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 0 0 1px #111; z-index: 5; }
+.clabel-content { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+.clabel-stripe { position: absolute; top: 0; left: 0; right: 0; height: 50%; background: #1A5A8E; z-index: 0; transition: background 0.4s; }
+.label-text-area { z-index: 1; text-align: center; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 15px; }
+#labelTitle { font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 10px; color: #111; background: rgba(255,255,255,0.8); padding: 1px 4px; border-radius: 2px; }
+.label-brand { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 6px; color: #222; letter-spacing: 1px; }
+#labelSide { font-family: 'VT323', monospace; font-size: 9px; color: #555; }
+.spindle-hole { position: absolute; width: 14px; height: 14px; background: #222; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; box-shadow: inset 0 2px 4px rgba(0,0,0,0.8); }
+
+/* === TONEARM === */
+.tonearm-assembly { position: absolute; top: 40px; right: 20px; width: 60px; height: 220px; z-index: 15; transform-origin: 30px 40px; transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+/* JS toggles .playing on the tonearm when audio starts */
+.tonearm-assembly.playing { transform: rotate(28deg); }
+
+.tonearm-base { width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e0e0e0, #888); position: absolute; top: 15px; left: 5px; box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 1px 1px #fff; border: 1px solid #666; }
+.tonearm-pivot { width: 24px; height: 24px; border-radius: 50%; background: #222; position: absolute; top: 13px; left: 13px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.5); }
+.tonearm-counterweight { width: 30px; height: 40px; background: linear-gradient(90deg, #999, #e0e0e0 30%, #888); border-radius: 4px; position: absolute; top: -20px; left: 15px; box-shadow: 0 3px 6px rgba(0,0,0,0.4); border: 1px solid #555; }
+.tonearm-counterweight::after { content:''; position:absolute; top:5px; bottom:5px; left:4px; width:2px; background:rgba(0,0,0,0.3); }
+
+.tonearm-wand { width: 6px; height: 160px; background: linear-gradient(90deg, #ccc, #fff 40%, #999); position: absolute; top: 40px; left: 27px; border-radius: 3px; box-shadow: 2px 5px 8px rgba(0,0,0,0.4); }
+/* Slight bend in the wand */
+.tonearm-wand::after { content: ''; position: absolute; bottom: -20px; left: -8px; width: 6px; height: 30px; background: linear-gradient(90deg, #ccc, #fff 40%, #999); border-radius: 3px; transform: rotate(25deg); transform-origin: top center; box-shadow: 2px 5px 8px rgba(0,0,0,0.4); }
+
+.tonearm-headshell { width: 14px; height: 25px; background: #111; position: absolute; bottom: -5px; left: 8px; transform: rotate(25deg); border-radius: 2px; box-shadow: 2px 4px 6px rgba(0,0,0,0.5); border: 1px solid #333; }
+.stylus { width: 4px; height: 8px; background: #silver; position: absolute; bottom: -4px; left: 5px; background: linear-gradient(90deg, #999, #eee); border-radius: 0 0 2px 2px; }
+
+/* === CONTROLS AREA (Right Side) === */
+.tt-controls { flex: 0.8; padding: 20px; display: flex; flex-direction: column; gap: 18px; z-index: 2; }
+
+/* Brand Plate */
+.tt-brand { background: #111; border: 1px solid #444; border-bottom: 1px solid #666; padding: 6px 10px; border-radius: 3px; text-align: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.5); }
+.tt-brand-en { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 14px; color: #d4af37; letter-spacing: 4px; }
+.tt-brand-zh { font-family: 'Noto Serif TC', serif; font-size: 9px; color: #a0a0a0; letter-spacing: 2px; margin-top: 2px; }
+
+/* Display Panel */
+.display-box { background: #0a0a0a; border: 2px solid #333; border-radius: 4px; padding: 10px; position: relative; box-shadow: inset 0 2px 8px rgba(0,0,0,1), 0 1px 1px rgba(255,255,255,0.4); border-bottom-color: #555; }
+.display-box::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 40%; background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 100%); pointer-events: none; }
+.display-track { font-family: 'VT323', monospace; font-size: 16px; color: #38C838; text-shadow: 0 0 6px rgba(56,200,56,0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; }
+.display-status { font-family: 'VT323', monospace; font-size: 11px; color: #288c28; margin-top: 4px; }
+.power-led { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: #501010; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8); transition: background 0.3s, box-shadow 0.3s; }
+.power-led.on { background: #ff2020; box-shadow: 0 0 10px rgba(255,32,32,0.8), inset 0 1px 2px rgba(255,255,255,0.5); }
+
+/* Knobs */
+.knob-row { display: flex; justify-content: space-around; padding: 0 10px; }
+.knob-grp { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.knob { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #111, #333); border: 2px solid #000; box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 0 0 2px #d0d0d0, inset 0 2px 4px rgba(255,255,255,0.3); position: relative; cursor: grab; touch-action: none; }
+.knob:active { cursor: grabbing; }
+.knob-dot { position: absolute; width: 3px; height: 8px; background: #fff; border-radius: 2px; top: 6px; left: calc(50% - 1.5px); transform-origin: 50% 17px; box-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.knob-lbl { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 9px; color: #444; letter-spacing: 1px; }
+
+/* Buttons */
+.tt-buttons { display: flex; gap: 8px; justify-content: center; }
+.btn { background: linear-gradient(180deg, #f4f4f4 0%, #c0c0c0 100%); border: 1px solid #888; border-bottom: 2px solid #666; border-radius: 4px; padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 2px #fff; transition: transform 0.08s, box-shadow 0.08s; flex: 1; }
+.btn:active { transform: translateY(2px); border-bottom-width: 1px; box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 1px #fff; margin-bottom: 1px; margin-top: 1px; }
+.btn-ico { font-size: 16px; color: #222; text-shadow: 0 1px 0 #fff; }
+.btn-play { background: linear-gradient(180deg, #333, #111); border-color: #000; }
+.btn-play .btn-ico { color: #f22; text-shadow: 0 0 4px rgba(255,0,0,0.5); }
+
+/* VU Meter */
+.vu-wrap { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #111; padding: 8px 15px; border-radius: 4px; border: 1px solid #444; box-shadow: inset 0 2px 6px rgba(0,0,0,0.8), 0 1px 1px rgba(255,255,255,0.4); }
+.vu-bars { display: flex; gap: 4px; align-items: flex-end; height: 18px; flex: 1; }
+.vu-b { flex: 1; height: 4px; background: #2a2a2a; border-radius: 1px; transition: height 0.05s ease, background 0.05s ease; }
+.vu-b.lit[data-i="1"], .vu-b.lit[data-i="2"], .vu-b.lit[data-i="3"], .vu-b.lit[data-i="4"], .vu-b.lit[data-i="5"] { background: #0f0; box-shadow: 0 0 5px #0f0; }
+.vu-b.lit[data-i="6"], .vu-b.lit[data-i="7"] { background: #ff0; box-shadow: 0 0 5px #ff0; }
+.vu-b.lit[data-i="8"] { background: #f00; box-shadow: 0 0 5px #f00; }
+.vu-lbl { font-family: 'Outfit', sans-serif; font-weight: bold; font-size: 9px; color: #888; letter-spacing: 1px; }
+
+/* === RECORD CRATE (Tape Bay Repurposed) === */
+.record-crate { width: 100%; background: #2c1e14; border-radius: 6px; padding: 12px 15px 15px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.3); border: 2px solid #1a1008; border-top: 4px solid #110a05; z-index: 1; }
+.crate-hdr { font-family: 'VT323', monospace; font-size: 14px; color: #b89c7c; text-align: center; letter-spacing: 3px; margin-bottom: 12px; text-shadow: 0 1px 2px #000; }
+.record-shelf { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; scrollbar-width: none; }
+.record-shelf::-webkit-scrollbar { display: none; }
+
+/* Mini Record Sleeves (overriding tape-thumb from JS) */
+.tape-thumb { flex-shrink: 0; width: 90px; height: 90px; border-radius: 2px; cursor: pointer; border: 1px solid #111; position: relative; background: #000; box-shadow: 2px 4px 8px rgba(0,0,0,0.6); transition: transform 0.2s, box-shadow 0.2s; overflow: visible; display: flex; flex-direction: column; }
+.tape-thumb:hover { transform: translateY(-10px); box-shadow: 4px 10px 15px rgba(0,0,0,0.5); }
+.tape-thumb:active { transform: translateY(-5px); }
+.tape-thumb.active { transform: translateY(-15px); box-shadow: 0 0 0 2px #d4af37, 0 10px 20px rgba(0,0,0,0.6); z-index: 5; }
+
+/* The Record sticking out of the sleeve */
+.tape-thumb::before { content: ''; position: absolute; width: 80px; height: 80px; border-radius: 50%; background: #111; top: -15px; right: -10px; z-index: -1; border: 1px solid #333; box-shadow: inset 0 0 0 2px #000, 2px 2px 5px rgba(0,0,0,0.5); transition: transform 0.3s; }
+.tape-thumb:hover::before, .tape-thumb.active::before { transform: translate(10px, -10px); }
+
+/* The Sleeve Cover */
+.tape-thumb-stripe { height: 100%; width: 100%; position: absolute; inset: 0; z-index: 1; opacity: 0.15; border-radius: 2px; }
+.tape-thumb-face { flex: 1; padding: 8px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; z-index: 2; border-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
+.tape-thumb-ttl { font-family: 'Noto Serif TC', serif; font-size: 11px; font-weight: 700; color: #111; line-height: 1.2; text-shadow: 0 0 2px rgba(255,255,255,0.8); background: rgba(255,255,255,0.6); padding: 2px 4px; border-radius: 2px; }
+
+/* Hide the unused tape reels generated by JS */
+.tape-thumb-reels { display: none; }
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+    .tt-body { flex-direction: column; }
+    .tt-platter-area { min-height: 280px; border-right: none; border-bottom: 1px solid #999; padding: 20px 0; }
+    .tt-platter-base { width: 220px; height: 220px; }
+    .record-spinner { width: 200px; height: 200px; }
+    .record-label { width: 70px; height: 70px; }
+    .tonearm-assembly { transform: scale(0.85); right: 10px; top: 20px; }
+    .tt-controls { padding: 15px; }
+}
