@@ -262,7 +262,7 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 }
 
-@media (orientation: landscape) and (max-height: 620px) and (max-width: 1199.98px) {
+@media (orientation: landscape) and (max-height: 760px) {
     .app {
         padding: 6px !important;
     }
