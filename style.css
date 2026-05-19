@@ -292,8 +292,30 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
         min-height: 0;
     }
 
+    .tt-body {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(280px, 34%);
+        grid-template-rows: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .tt-body > .tt-platter-area,
+    .tt-body > .tt-controls {
+        width: auto !important;
+        max-width: none !important;
+        flex: none !important;
+        min-width: 0;
+    }
+
+    .tt-platter-area {
+        border-right: 1px solid #999;
+        border-bottom: none;
+        box-shadow: 1px 0 0 rgba(255,255,255,0.5);
+    }
+
     .tt-platter-base {
-        max-width: min(250px, calc(48vw - 62px), calc(100dvh - 56px));
+        max-width: min(320px, calc(46vw - 54px), calc(100dvh - 72px));
     }
 
     .tonearm-assembly {
@@ -307,9 +329,11 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 
     .tt-controls {
+        height: 100%;
         padding: 10px !important;
         gap: 8px !important;
         justify-content: center !important;
+        overflow: hidden;
     }
 
     .tt-brand {
@@ -318,6 +342,10 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
 
     .display-box {
         padding: 7px 10px;
+    }
+
+    .display-track {
+        font-size: clamp(15px, 2.1vw, 20px);
     }
 
     .knob {
@@ -331,7 +359,13 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 
     .vu-wrap {
+        width: 100%;
+        min-height: 36px;
         padding: 6px 10px !important;
+    }
+
+    .vu-bars {
+        min-width: 0;
     }
 
     .record-crate {
@@ -349,7 +383,7 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     .record-shelf {
         flex-direction: column !important;
         align-items: center;
-        gap: 10px !important;
+        gap: 16px !important;
         padding: 8px 6px 12px;
         overflow-x: hidden !important;
         overflow-y: auto !important;
@@ -358,10 +392,25 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     .tape-thumb {
         width: clamp(64px, 13dvh, 74px);
         height: clamp(64px, 13dvh, 74px);
+        transform: none !important;
+    }
+
+    .tape-thumb:hover,
+    .tape-thumb:active,
+    .tape-thumb.active {
+        transform: none !important;
     }
 
     .tape-thumb::before {
         width: calc(clamp(64px, 13dvh, 74px) - 8px);
         height: calc(clamp(64px, 13dvh, 74px) - 8px);
+        top: 50%;
+        right: -22px;
+        transform: translateY(-50%) !important;
+    }
+
+    .tape-thumb:hover::before,
+    .tape-thumb.active::before {
+        transform: translateY(-50%) !important;
     }
 }
