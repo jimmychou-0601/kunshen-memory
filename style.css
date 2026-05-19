@@ -3,23 +3,26 @@
 html, body { width: 100%; height: 100%; overflow: hidden; background: #222; font-family: 'Noto Serif TC', serif; user-select: none; -webkit-user-select: none; touch-action: manipulation; display: flex; align-items: center; justify-content: center; }
 
 /* === APP === */
-.app { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; overflow-y: auto; padding: 20px 0; background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%); }
+.app { background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%); }
 
 /* === TURNTABLE CONTAINER === */
-.turntable { width: min(680px, 95vw); position: relative; display: flex; flex-direction: column; align-items: center; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); gap: 15px; }
+.turntable { position: relative; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
 
 /* === TURNTABLE BODY (Wooden Plinth + Metal Face) === */
-.tt-body { width: 100%; background: linear-gradient(180deg, #d4d4d4 0%, #b0b0b0 100%); border-radius: 8px; position: relative; display: flex; box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 10px 20px rgba(0,0,0,0.5), 0 0 0 8px #5c3a21; /* Wood trim via box-shadow */ border: 1px solid #332010; z-index: 2; }
+.tt-body { background: linear-gradient(180deg, #d4d4d4 0%, #b0b0b0 100%); border-radius: 8px; position: relative; box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 10px 20px rgba(0,0,0,0.5), 0 0 0 8px #5c3a21; /* Wood trim via box-shadow */ border: 1px solid #332010; z-index: 2; }
 /* Wood texture for the trim */
 .tt-body::before { content: ''; position: absolute; inset: -8px; border-radius: 12px; background: repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(0,0,0,0.05) 10px, rgba(0,0,0,0.05) 20px); pointer-events: none; z-index: -1; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
 /* Brushed metal texture for face */
 .tt-body::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(255,255,255,0.1) 1px, rgba(255,255,255,0.1) 2px); border-radius: 8px; pointer-events: none; z-index: 1; }
 
 /* === PLATTER AREA (Left Side) === */
-.tt-platter-area { flex: 1.2; position: relative; min-height: 320px; display: flex; align-items: center; justify-content: center; z-index: 2; border-right: 1px solid #999; box-shadow: 1px 0 0 rgba(255,255,255,0.5); }
+.tt-platter-area { position: relative; z-index: 2; border-right: 1px solid #999; box-shadow: 1px 0 0 rgba(255,255,255,0.5); }
+@media (max-width: 768px) {
+    .tt-platter-area { border-right: none; border-bottom: 1px solid #999; box-shadow: 0 1px 0 rgba(255,255,255,0.5); }
+}
 
 /* The metallic platter */
-.tt-platter-base { width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e8e8e8, #a0a0a0 70%, #777); position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 0 0 2px #f0f0f0, inset 0 0 0 6px #ccc, inset 0 0 0 8px #888; }
+.tt-platter-base { width: 100%; max-width: 320px; aspect-ratio: 1/1; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #e8e8e8, #a0a0a0 70%, #777); position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.4), inset 0 0 0 2px #f0f0f0, inset 0 0 0 6px #ccc, inset 0 0 0 8px #888; }
 .tt-platter-base::after { content: ''; position: absolute; inset: 12px; border-radius: 50%; background: #1a1a1a; box-shadow: inset 0 0 10px rgba(0,0,0,0.8); /* Platter mat */ }
 
 /* Spindle */
@@ -27,9 +30,8 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #222; font
 .spindle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 3px; height: 3px; background: #fff; border-radius: 50%; filter: blur(1px); }
 
 /* === RECORD === */
-.record-spinner { width: 260px; height: 260px; position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
-.record-spinner.spinning { animation: spinRecord 1.8s linear infinite; }
-@keyframes spinRecord { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.record-spinner { width: 92%; height: 92%; position: absolute; z-index: 10; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: grab; touch-action: none; }
+.record-spinner:active { cursor: grabbing; }
 
 .record { width: 100%; height: 100%; border-radius: 50%; background: #080808; position: relative; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5); overflow: hidden; transition: transform 0.5s cubic-bezier(0.3, 1.2, 0.5, 1); }
 /* Slide in animation for record insertion */
@@ -43,7 +45,7 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #222; font
 .record-grooves::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient( from 0deg, rgba(255,255,255,0.1) 0deg, transparent 40deg, rgba(255,255,255,0.1) 180deg, transparent 220deg, rgba(255,255,255,0.1) 360deg ); mix-blend-mode: screen; opacity: 0.6; pointer-events: none; }
 
 /* Record Label */
-.record-label { width: 90px; height: 90px; border-radius: 50%; background: #eee; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 0 0 1px #111; z-index: 5; }
+.record-label { width: 35%; height: 35%; border-radius: 50%; background: #eee; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 0 0 1px #111; z-index: 5; }
 .clabel-content { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
 .clabel-stripe { position: absolute; top: 0; left: 0; right: 0; height: 50%; background: #1A5A8E; z-index: 0; transition: background 0.4s; }
 .label-text-area { z-index: 1; text-align: center; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 15px; }
@@ -110,11 +112,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #222; font
 .vu-b.lit[data-i="8"] { background: #f00; box-shadow: 0 0 5px #f00; }
 .vu-lbl { font-family: 'Outfit', sans-serif; font-weight: bold; font-size: 9px; color: #888; letter-spacing: 1px; }
 
-/* === RECORD CRATE (Tape Bay Repurposed) === */
-.record-crate { width: 100%; background: #2c1e14; border-radius: 6px; padding: 12px 15px 15px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.3); border: 2px solid #1a1008; border-top: 4px solid #110a05; z-index: 1; }
-.crate-hdr { font-family: 'VT323', monospace; font-size: 14px; color: #b89c7c; text-align: center; letter-spacing: 3px; margin-bottom: 12px; text-shadow: 0 1px 2px #000; }
-.record-shelf { display: flex; gap: 15px; overflow-x: auto; padding: 10px 5px; scrollbar-width: none; }
+/* === RECORD CRATE === */
+.record-crate { background: #2c1e14; border-radius: 6px; box-shadow: inset 0 5px 15px rgba(0,0,0,0.6), 0 4px 8px rgba(0,0,0,0.3); border: 2px solid #1a1008; border-top: 4px solid #110a05; z-index: 1; }
+.crate-hdr { font-family: 'VT323', monospace; font-size: 14px; color: #b89c7c; letter-spacing: 3px; text-shadow: 0 1px 2px #000; }
 .record-shelf::-webkit-scrollbar { display: none; }
+.record-shelf { scrollbar-width: none; }
 
 /* Mini Record Sleeves (overriding tape-thumb from JS) */
 .tape-thumb { flex-shrink: 0; width: 90px; height: 90px; border-radius: 2px; cursor: pointer; border: 1px solid #111; position: relative; background: #000; box-shadow: 2px 4px 8px rgba(0,0,0,0.6); transition: transform 0.2s, box-shadow 0.2s; overflow: visible; display: flex; flex-direction: column; }
@@ -131,139 +133,4 @@ html, body { width: 100%; height: 100%; overflow: hidden; background: #222; font
 .tape-thumb-face { flex: 1; padding: 8px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; z-index: 2; border-radius: 2px; border: 1px solid rgba(255,255,255,0.1); }
 .tape-thumb-ttl { font-family: 'Noto Serif TC', serif; font-size: 11px; font-weight: 700; color: #111; line-height: 1.2; text-shadow: 0 0 2px rgba(255,255,255,0.8); background: rgba(255,255,255,0.6); padding: 2px 4px; border-radius: 2px; }
 
-/* Hide the unused tape reels generated by JS */
-.tape-thumb-reels { display: none; }
 
-/* === MOBILE PORTRAIT (Stacked Layout) === */
-@media screen and (max-width: 768px) and (orientation: portrait) {
-    .app { 
-        padding: 15px; 
-        align-items: flex-start; 
-        background: radial-gradient(circle at 50% 30%, #3a3a3a 0%, #111 100%);
-    }
-    .turntable { 
-        width: 100%; 
-        max-width: 500px; 
-        flex-direction: column; 
-        gap: 15px; 
-    }
-    .tt-body { 
-        flex-direction: column; 
-        border-radius: 8px; 
-    }
-    
-    .tt-platter-area { 
-        width: 100%; 
-        border-right: none; 
-        border-bottom: 1px solid #999; 
-        padding: 20px; 
-        min-height: unset; 
-    }
-    .tt-platter-base { 
-        width: 100%; 
-        max-width: 320px; 
-        aspect-ratio: 1/1; 
-        height: auto; 
-    }
-    .record-spinner { width: 92%; height: 92%; }
-    .record-label { width: 30%; height: 30%; }
-    .tonearm-assembly { transform: scale(0.8); right: 5px; top: 15px; }
-    
-    .tt-controls { width: 100%; padding: 15px; flex-direction: column; gap: 15px; }
-    .vu-wrap { padding: 8px 15px; }
-    
-    .record-crate { 
-        width: 100%; 
-        height: auto; 
-        border-left: 2px solid #1a1008; 
-        border-top: 4px solid #110a05; 
-        border-radius: 6px; 
-        padding: 15px; 
-    }
-    .record-shelf { 
-        flex-direction: row; 
-        overflow-x: auto; 
-        overflow-y: hidden; 
-        padding: 10px 5px; 
-        align-items: center; 
-    }
-}
-
-/* === MOBILE LANDSCAPE (Full-Screen Side-by-Side) === */
-@media screen and (max-width: 950px) and (orientation: landscape) {
-    .app { 
-        padding: 0; 
-        align-items: stretch; 
-        justify-content: stretch; 
-        overflow: hidden; 
-        background: #222;
-    }
-    .turntable { 
-        width: 100%; 
-        height: 100%; 
-        max-width: none; 
-        flex-direction: row; 
-        gap: 0; 
-        filter: none; 
-    }
-    .tt-body { 
-        flex: 1; 
-        border-radius: 0; 
-        border: none; 
-        box-shadow: none; 
-        flex-direction: row; 
-    }
-    .tt-body::before, .tt-body::after { display: none; }
-    
-    .tt-platter-area { 
-        flex: 1.2; 
-        border-right: 2px solid #111; 
-        min-height: 100%; 
-        padding: 10px;
-    }
-    .tt-platter-base { 
-        max-width: 90%; 
-        max-height: 90%; 
-        aspect-ratio: 1/1; 
-        height: auto; 
-    }
-    .record-spinner { width: 92%; height: 92%; }
-    .record-label { width: 30%; height: 30%; }
-    .tonearm-assembly { transform: scale(0.75); right: 5px; top: 10px; }
-    
-    .tt-controls { 
-        flex: 1; 
-        padding: 5px 10px; 
-        justify-content: space-evenly; 
-        gap: 5px; 
-    }
-    .display-box { padding: 4px 8px; }
-    .display-track { font-size: 13px; }
-    .knob { width: 34px; height: 34px; }
-    .tt-buttons { flex-wrap: wrap; gap: 4px; }
-    .btn { padding: 6px; flex: 1 1 40%; }
-    .vu-wrap { padding: 4px 8px; gap: 5px; }
-    
-    .record-crate { 
-        width: 110px; 
-        height: 100%; 
-        border-radius: 0; 
-        border: none; 
-        border-left: 2px solid #110a05; 
-        padding: 5px; 
-        flex-direction: column;
-    }
-    .crate-hdr { margin-bottom: 5px; font-size: 10px; }
-    .record-shelf { 
-        flex-direction: column; 
-        overflow-y: auto; 
-        overflow-x: hidden; 
-        height: 100%; 
-        gap: 10px; 
-        padding: 5px 0; 
-        align-items: center; 
-    }
-    .tape-thumb { width: 60px; height: 60px; }
-    .tape-thumb::before { width: 54px; height: 54px; top: -8px; right: -4px; }
-    .tape-thumb-ttl { font-size: 8px; }
-}

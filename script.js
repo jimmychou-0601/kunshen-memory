@@ -124,8 +124,147 @@ function init() {
     D.btnRew.addEventListener('click', onRew);
     D.btnFF.addEventListener('click', onFF);
 
+    setupMediaSession();
+    setupScratching();
+
     D.cassette.classList.add('hidden');
     D.deckEmpty.classList.add('visible');
+    
+    requestAnimationFrame(renderLoop);
+}
+
+/* ===================================
+   RENDER LOOP & ROTATION
+=================================== */
+function renderLoop() {
+    requestAnimationFrame(renderLoop);
+    
+    // 1. Sync Platter Rotation with Audio Time
+    if (S.hasTape) {
+        // 200 degrees per second (1.8s per rev)
+        const angle = (S.audioEl.currentTime * 200) % 360;
+        D.reelL.style.transform = `rotate(${angle}deg)`;
+    } else {
+        D.reelL.style.transform = `rotate(0deg)`;
+    }
+    
+    // 2. VU Meter Animation
+    if (S.playing && S.nodes.analyser) {
+        tickVU();
+    } else {
+        // Smooth drop to zero
+        if (S.vuLevel > 0) {
+            S.vuLevel = Math.max(0, S.vuLevel - 0.5);
+            const level = Math.round(S.vuLevel);
+            D.vuBars.forEach((b, i) => {
+                const on = (i + 1) <= level;
+                b.classList.toggle('lit', on);
+                b.style.height = on ? (4 + (i + 1) * 3) + 'px' : '4px';
+            });
+        }
+    }
+}
+
+/* ===================================
+   SCRATCHING (DJ Interaction)
+=================================== */
+function setupScratching() {
+    let isDragging = false;
+    let startAngle = 0;
+    let startAudioTime = 0;
+    let center = { x: 0, y: 0 };
+    
+    function getAngle(e) {
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const dx = clientX - center.x;
+        const dy = clientY - center.y;
+        return Math.atan2(dy, dx) * (180 / Math.PI);
+    }
+    
+    const down = (e) => {
+        if (!S.hasTape) return;
+        if (e.cancelable) e.preventDefault();
+        isDragging = true;
+        
+        const rect = D.reelL.getBoundingClientRect();
+        center = {
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2
+        };
+        
+        startAngle = getAngle(e);
+        startAudioTime = S.audioEl.currentTime;
+        
+        // Temporarily pause if playing so scrubbing takes over cleanly
+        if (S.playing) S.audioEl.pause();
+    };
+    
+    const move = (e) => {
+        if (!isDragging) return;
+        if (e.cancelable) e.preventDefault();
+        
+        const currentAngle = getAngle(e);
+        let diff = currentAngle - startAngle;
+        
+        // Wraparound check
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+        
+        // Map angle change directly to time (150 degrees = 1 second for good feel)
+        const timeDiff = diff / 150;
+        let newTime = startAudioTime + timeDiff;
+        newTime = Math.max(0, Math.min(S.audioEl.duration || 0, newTime));
+        
+        S.audioEl.currentTime = newTime;
+        
+        startAngle = currentAngle;
+        startAudioTime = newTime;
+    };
+    
+    const up = () => {
+        if (!isDragging) return;
+        isDragging = false;
+        if (S.playing) S.audioEl.play().catch(()=>{});
+    };
+    
+    D.reelL.addEventListener('mousedown', down);
+    D.reelL.addEventListener('touchstart', down, { passive: false });
+    
+    window.addEventListener('mousemove', move, { passive: false });
+    window.addEventListener('touchmove', move, { passive: false });
+    window.addEventListener('mouseup', up);
+    window.addEventListener('touchend', up);
+}
+
+/* ===================================
+   TAPE SHELF
+=================================== */
+function updateMediaSession(tape) {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: tape.title,
+            artist: 'KMN RECORDS',
+            album: '鯤鯓記憶'
+        });
+    }
+}
+
+function setupMediaSession() {
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.setActionHandler('play', () => {
+            if (S.hasTape && !S.playing) onPlay();
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+            if (S.hasTape && S.playing) onPlay();
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', () => {
+            if (S.hasTape) onRew();
+        });
+        navigator.mediaSession.setActionHandler('nexttrack', () => {
+            if (S.hasTape) onFF();
+        });
+    }
 }
 
 /* ===================================
@@ -173,6 +312,7 @@ function onSelectTape(id) {
     // Load new audio file
     S.audioEl.src = tape.file;
     S.audioEl.load();
+    updateMediaSession(tape);
 
     // Update visuals
     D.labelStripe.style.background = tape.color;
@@ -226,7 +366,6 @@ function onEject() {
     setDisplay('── 選擇錄音帶 ──', '◼ NO TAPE');
     D.powerLed.classList.remove('on');
     if (D.tonearm) D.tonearm.classList.remove('playing');
-    stopReels();
 }
 
 /* ===================================
@@ -257,15 +396,11 @@ function setPlaying(yes) {
         if (D.playLbl) D.playLbl.textContent = 'PAUSE';
         if (D.dispStatus) D.dispStatus.textContent = '▶ PLAYING';
         if (D.tonearm) D.tonearm.classList.add('playing');
-        startReels();
-        startVU();
     } else {
         if (D.playIco) D.playIco.textContent = '▶';
         if (D.playLbl) D.playLbl.textContent = 'PLAY';
         if (D.dispStatus) D.dispStatus.textContent = S.hasTape ? '◼ LOADED' : '◼ NO TAPE';
         if (D.tonearm) D.tonearm.classList.remove('playing');
-        stopReels();
-        stopVU();
     }
 }
 
@@ -275,76 +410,34 @@ function setPlaying(yes) {
 function onRew() {
     if (!S.hasTape) return;
     const was = S.playing;
-    if (was) { pauseAudio(); stopReels(); }
+    if (was) { pauseAudio(); }
     
-    D.reelL.style.animationDuration = '0.35s';
-    if (D.reelR) D.reelR.style.animationDuration = '0.35s';
-    D.reelL.classList.add('spinning');
-    if (D.reelR) D.reelR.classList.add('spinning');
     setDisplay(TAPES[S.tapeId].title, '◀◀ REWIND');
-    
     S.audioEl.currentTime = Math.max(0, S.audioEl.currentTime - 15);
     
     setTimeout(() => {
-        D.reelL.style.animationDuration = '';
-        if (D.reelR) D.reelR.style.animationDuration = '';
-        if (!was) { stopReels(); setDisplay(TAPES[S.tapeId].title, '◼ LOADED'); }
-        else { startAudio(); startReels(); setDisplay(TAPES[S.tapeId].title, '▶ PLAYING'); }
-    }, 1000);
+        if (!was) { setDisplay(TAPES[S.tapeId].title, '◼ LOADED'); }
+        else { startAudio(); setDisplay(TAPES[S.tapeId].title, '▶ PLAYING'); }
+    }, 400);
 }
 
 function onFF() {
     if (!S.hasTape) return;
     const was = S.playing;
-    if (was) { pauseAudio(); stopReels(); }
+    if (was) { pauseAudio(); }
     
-    D.reelL.style.animationDuration = '0.25s';
-    if (D.reelR) D.reelR.style.animationDuration = '0.25s';
-    D.reelL.classList.add('spinning');
-    if (D.reelR) D.reelR.classList.add('spinning');
     setDisplay(TAPES[S.tapeId].title, '▶▶ F.FWD');
-    
     S.audioEl.currentTime = Math.min(S.audioEl.duration || Number.MAX_VALUE, S.audioEl.currentTime + 15);
     
     setTimeout(() => {
-        D.reelL.style.animationDuration = '';
-        if (D.reelR) D.reelR.style.animationDuration = '';
-        if (!was) { stopReels(); setDisplay(TAPES[S.tapeId].title, '◼ LOADED'); }
-        else { startAudio(); startReels(); setDisplay(TAPES[S.tapeId].title, '▶ PLAYING'); }
-    }, 1000);
-}
-
-/* ===================================
-   REELS
-=================================== */
-function startReels() {
-    D.reelL.classList.add('spinning');
-    D.reelR.classList.add('spinning');
-}
-function stopReels() {
-    D.reelL.classList.remove('spinning');
-    D.reelR.classList.remove('spinning');
+        if (!was) { setDisplay(TAPES[S.tapeId].title, '◼ LOADED'); }
+        else { startAudio(); setDisplay(TAPES[S.tapeId].title, '▶ PLAYING'); }
+    }, 400);
 }
 
 /* ===================================
    VU METER
 =================================== */
-function startVU() {
-    if (S.vuTimer) return;
-    function render() {
-        S.vuTimer = requestAnimationFrame(render);
-        tickVU();
-    }
-    render();
-}
-
-function stopVU() {
-    cancelAnimationFrame(S.vuTimer);
-    S.vuTimer = null;
-    S.vuLevel = 0;
-    D.vuBars.forEach(b => { b.classList.remove('lit'); b.style.height = '4px'; });
-}
-
 function tickVU() {
     if (!S.nodes.analyser) return;
     
