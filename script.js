@@ -62,13 +62,9 @@ const S = {
     tapeId:     null,
     playing:    false,
     volume:     0.7,
-    audioCtx:   null,
-    nodes:      {},
-    vuTimer:    null,
-    vuPhase:    0,
+    vuLevel:    0,
     audioEl:    new Audio()
 };
-S.audioEl.crossOrigin = "anonymous";
 S.audioEl.addEventListener('ended', () => {
     if (S.playing) {
         setPlaying(false);
@@ -111,7 +107,7 @@ function init() {
     buildShelf();
     setupKnob(D.knobVol, 70, v => {
         S.volume = v / 100;
-        if (S.nodes.master) S.nodes.master.gain.value = S.volume * 0.4;
+        S.audioEl.volume = S.volume;
     });
     setupKnob(D.knobTone, 50, v => {
         // Pitch Control (Playback Rate): 50 is normal (1.0x). Range 0.5x to 1.5x
@@ -139,17 +135,16 @@ function init() {
 function renderLoop() {
     requestAnimationFrame(renderLoop);
     
-    // 1. Sync Platter Rotation with Audio Time
+    // 2. Sync Platter Rotation with Audio Time
     if (S.hasTape) {
-        // 200 degrees per second (1.8s per rev)
         const angle = (S.audioEl.currentTime * 200) % 360;
         D.reelL.style.transform = `rotate(${angle}deg)`;
     } else {
         D.reelL.style.transform = `rotate(0deg)`;
     }
     
-    // 2. VU Meter Animation
-    if (S.playing && S.nodes.analyser) {
+    // 3. VU Meter Animation
+    if (S.playing) {
         tickVU();
     } else {
         // Smooth drop to zero
@@ -439,33 +434,26 @@ function onFF() {
    VU METER
 =================================== */
 function tickVU() {
-    if (!S.nodes.analyser) return;
+    // Generate a rhythmic, pseudo-random bounce to simulate a real VU meter
+    // We use Date.now() to create a beat-like pattern
+    const time = Date.now();
+    const beat = Math.sin(time / 150) * Math.sin(time / 400); // Rhythmic oscillation
+    const noise = Math.random() * 0.5; // Random flutter
     
-    // Use Frequency Data instead of Time Domain for a punchier, beat-accurate meter
-    const data = new Uint8Array(S.nodes.analyser.frequencyBinCount);
-    S.nodes.analyser.getByteFrequencyData(data);
+    // Base level depends on volume
+    const base = (S.volume * 4); 
     
-    let sum = 0;
-    // Focus on the lower 60% of frequencies (bass and mids) where most music energy lives
-    const limit = Math.floor(data.length * 0.6);
-    for (let i = 0; i < limit; i++) {
-        sum += data[i];
-    }
-    const avg = sum / limit;
-    
-    // avg is typically 0 to ~150. Map 0-110 to our 0-8 LED scale.
-    // We add a tiny bit of random bounce to make it feel alive like an analog meter
-    let val = (avg / 110) * 8;
-    if (val > 0.5) val += (Math.random() * 0.8 - 0.4); 
-    
-    let target = Math.min(8, val);
+    // Calculate simulated target level (0 to 8)
+    let val = base + (beat * 3) + (noise * 2);
+    let target = Math.max(1, Math.min(8, val));
     
     if (S.vuLevel === undefined) S.vuLevel = 0;
-    // Fast attack (jump up quickly), slow release (drop down smoothly)
+    
+    // Fast attack, slower release
     if (target > S.vuLevel) {
         S.vuLevel = target;
     } else {
-        S.vuLevel = Math.max(0, S.vuLevel - 0.4);
+        S.vuLevel = Math.max(0, S.vuLevel - 0.5);
     }
     
     const level = Math.round(S.vuLevel);
@@ -487,32 +475,8 @@ function setDisplay(track, status) {
 /* ===================================
    AUDIO ENGINE
 =================================== */
-function getCtx() {
-    if (!S.audioCtx) {
-        S.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (S.audioCtx.state === 'suspended') S.audioCtx.resume();
-    return S.audioCtx;
-}
-
 function startAudio() {
-    const ctx = getCtx();
-    
-    if (!S.nodes.mediaSource) {
-        S.nodes.mediaSource = ctx.createMediaElementSource(S.audioEl);
-        const master = ctx.createGain();
-        const analyser = ctx.createAnalyser();
-        analyser.fftSize = 512;
-        
-        S.nodes.mediaSource.connect(master);
-        master.connect(analyser);
-        analyser.connect(ctx.destination);
-        
-        S.nodes.master = master;
-        S.nodes.analyser = analyser;
-    }
-    
-    S.nodes.master.gain.value = S.volume * 0.4;
+    S.audioEl.volume = S.volume;
     S.audioEl.play().catch(e => console.error("Play failed", e));
 }
 

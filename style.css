@@ -3,7 +3,7 @@
 html, body { width: 100%; height: 100%; overflow: hidden; background: #222; font-family: 'Noto Serif TC', serif; user-select: none; -webkit-user-select: none; touch-action: manipulation; display: flex; align-items: center; justify-content: center; }
 
 /* === APP === */
-.app { background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%); }
+.app { background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%); min-height: 100dvh !important; }
 
 /* === TURNTABLE CONTAINER === */
 .turntable { position: relative; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6)); }
