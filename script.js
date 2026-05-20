@@ -161,14 +161,79 @@ function renderLoop() {
 }
 
 /* ===================================
-   SCRATCHING (DJ Interaction)
+   SCRATCHING (DJ Interaction + Sound)
 =================================== */
 function setupScratching() {
     let isDragging = false;
     let startAngle = 0;
     let startAudioTime = 0;
     let center = { x: 0, y: 0 };
-    
+    let lastMoveTime = 0;
+    let lastAngle = 0;
+
+    // --- Scratch sound (Web Audio) ---
+    let audioCtx = null;
+    let noiseSource = null;
+    let scratchGain = null;
+    let scratchFilter = null;
+    let scratchLowpass = null;
+
+    function ensureScratchAudio() {
+        if (audioCtx) return;
+        const Ctx = window.AudioContext || window.webkitAudioContext;
+        if (!Ctx) return;
+        audioCtx = new Ctx();
+
+        // White noise buffer (2s, looped)
+        const bufferSize = audioCtx.sampleRate * 2;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+
+        noiseSource = audioCtx.createBufferSource();
+        noiseSource.buffer = buffer;
+        noiseSource.loop = true;
+
+        // Bandpass for vinyl friction tone
+        scratchFilter = audioCtx.createBiquadFilter();
+        scratchFilter.type = 'bandpass';
+        scratchFilter.frequency.value = 600;
+        scratchFilter.Q.value = 4;
+
+        // Lowpass to dampen high hiss
+        scratchLowpass = audioCtx.createBiquadFilter();
+        scratchLowpass.type = 'lowpass';
+        scratchLowpass.frequency.value = 3500;
+
+        scratchGain = audioCtx.createGain();
+        scratchGain.gain.value = 0;
+
+        noiseSource.connect(scratchFilter);
+        scratchFilter.connect(scratchLowpass);
+        scratchLowpass.connect(scratchGain);
+        scratchGain.connect(audioCtx.destination);
+
+        noiseSource.start();
+    }
+
+    function setScratchIntensity(velocity) {
+        if (!scratchGain || !audioCtx) return;
+        // velocity: degrees per ms (typical drag: 0.05 - 1.5)
+        const v = Math.min(1, velocity * 1.5);
+        const targetGain = v * S.volume * 0.5;
+        const targetFreq = 350 + v * 1400;
+        const t = audioCtx.currentTime;
+        scratchGain.gain.setTargetAtTime(targetGain, t, 0.02);
+        scratchFilter.frequency.setTargetAtTime(targetFreq, t, 0.03);
+    }
+
+    function fadeScratchOut() {
+        if (!scratchGain || !audioCtx) return;
+        scratchGain.gain.setTargetAtTime(0, audioCtx.currentTime, 0.08);
+    }
+
     function getAngle(e) {
         const clientX = e.touches ? e.touches[0].clientX : e.clientX;
         const clientY = e.touches ? e.touches[0].clientY : e.clientY;
@@ -176,56 +241,75 @@ function setupScratching() {
         const dy = clientY - center.y;
         return Math.atan2(dy, dx) * (180 / Math.PI);
     }
-    
+
     const down = (e) => {
         if (!S.hasTape) return;
         if (e.cancelable) e.preventDefault();
         isDragging = true;
-        
+
+        ensureScratchAudio();
+        if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(()=>{});
+        }
+
         const rect = D.reelL.getBoundingClientRect();
         center = {
             x: rect.left + rect.width / 2,
             y: rect.top + rect.height / 2
         };
-        
+
         startAngle = getAngle(e);
         startAudioTime = S.audioEl.currentTime;
-        
+        lastAngle = startAngle;
+        lastMoveTime = performance.now();
+
         // Temporarily pause if playing so scrubbing takes over cleanly
         if (S.playing) S.audioEl.pause();
     };
-    
+
     const move = (e) => {
         if (!isDragging) return;
         if (e.cancelable) e.preventDefault();
-        
+
         const currentAngle = getAngle(e);
         let diff = currentAngle - startAngle;
-        
+
         // Wraparound check
         if (diff > 180) diff -= 360;
         if (diff < -180) diff += 360;
-        
+
+        // Velocity for scratch sound (degrees per ms)
+        const now = performance.now();
+        let angleDelta = currentAngle - lastAngle;
+        if (angleDelta > 180) angleDelta -= 360;
+        if (angleDelta < -180) angleDelta += 360;
+        const dt = Math.max(1, now - lastMoveTime);
+        const velocity = Math.abs(angleDelta) / dt;
+        setScratchIntensity(velocity);
+        lastAngle = currentAngle;
+        lastMoveTime = now;
+
         // Map angle change directly to time (150 degrees = 1 second for good feel)
         const timeDiff = diff / 150;
         let newTime = startAudioTime + timeDiff;
         newTime = Math.max(0, Math.min(S.audioEl.duration || 0, newTime));
-        
+
         S.audioEl.currentTime = newTime;
-        
+
         startAngle = currentAngle;
         startAudioTime = newTime;
     };
-    
+
     const up = () => {
         if (!isDragging) return;
         isDragging = false;
+        fadeScratchOut();
         if (S.playing) S.audioEl.play().catch(()=>{});
     };
-    
+
     D.reelL.addEventListener('mousedown', down);
     D.reelL.addEventListener('touchstart', down, { passive: false });
-    
+
     window.addEventListener('mousemove', move, { passive: false });
     window.addEventListener('touchmove', move, { passive: false });
     window.addEventListener('mouseup', up);
