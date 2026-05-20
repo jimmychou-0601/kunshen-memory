@@ -276,17 +276,28 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 }
 
-/* === 直式手機：按鈕 2x2 滿版 + 內容置中 === */
+/* === 直式手機：按鈕 2x2 滿版（突破容器 padding 至手機邊緣）=== */
 @media (max-width: 991.98px) and (orientation: portrait) {
+    .tt-controls {
+        justify-content: center !important;
+        gap: 14px !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
+    }
+
     .tt-buttons {
-        width: 100% !important;
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
+        grid-template-rows: 56px 56px !important;
         grid-template-areas: "prev next" "play eject" !important;
         gap: 10px !important;
-        justify-items: stretch !important;
-        align-items: stretch !important;
-        margin: 0 !important;
+        align-content: start !important;
+        margin-left: -16px !important;
+        margin-right: -16px !important;
+        width: calc(100% + 32px) !important;
+        height: auto !important;
+        min-height: 0 !important;
+        flex: 0 0 auto !important;
     }
 
     #btnRew { grid-area: prev; }
@@ -296,11 +307,15 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
 
     .tt-buttons .btn {
         width: 100% !important;
-        min-height: 56px !important;
-        padding: 10px !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        padding: 8px !important;
+        margin: 0 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
+        flex: 0 0 auto !important;
     }
 
     .tt-buttons .btn-ico {
