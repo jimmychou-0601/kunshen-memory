@@ -3,7 +3,15 @@
 html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto; background: #222; font-family: 'Noto Serif TC', serif; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 
 /* === APP === */
-.app { background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%); min-height: 100dvh !important; overflow-x: hidden; padding-bottom: 60px !important; }
+.app {
+    background: radial-gradient(ellipse at 50% 50%, #3a3a3a 0%, #111 100%);
+    min-height: 100dvh !important;
+    overflow-x: hidden;
+    padding-top: max(8px, env(safe-area-inset-top)) !important;
+    padding-bottom: max(20px, env(safe-area-inset-bottom)) !important;
+    padding-left: max(8px, env(safe-area-inset-left)) !important;
+    padding-right: max(8px, env(safe-area-inset-right)) !important;
+}
 #radio { max-width: min(1100px, calc(100vw - 1rem)) !important; }
 
 /* === TURNTABLE CONTAINER === */
@@ -138,8 +146,10 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
 @media (max-width: 991.98px) {
     .app {
         justify-content: flex-start !important;
-        padding: 8px !important;
-        padding-bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+        padding-top: max(8px, env(safe-area-inset-top)) !important;
+        padding-bottom: max(12px, env(safe-area-inset-bottom)) !important;
+        padding-left: max(8px, env(safe-area-inset-left)) !important;
+        padding-right: max(8px, env(safe-area-inset-right)) !important;
     }
 
     #radio {
@@ -221,7 +231,10 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
 
 @media (max-width: 575.98px) {
     .app {
-        padding: 6px !important;
+        padding-top: max(6px, env(safe-area-inset-top)) !important;
+        padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        padding-left: max(6px, env(safe-area-inset-left)) !important;
+        padding-right: max(6px, env(safe-area-inset-right)) !important;
     }
 
     #radio {
@@ -263,15 +276,31 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
 }
 
 @media (orientation: landscape) and (max-height: 760px) {
+    html, body {
+        height: 100%;
+        max-height: 100dvh;
+        overflow: hidden !important;
+    }
+
     .app {
-        padding: 6px !important;
+        padding-top: max(6px, env(safe-area-inset-top)) !important;
+        padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
+        padding-left: max(6px, env(safe-area-inset-left)) !important;
+        padding-right: max(6px, env(safe-area-inset-right)) !important;
+        min-height: 100dvh !important;
+        height: 100dvh !important;
+        max-height: 100dvh !important;
+        overflow: hidden !important;
+        justify-content: center !important;
     }
 
     #radio {
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) clamp(142px, 19vw, 190px);
+        grid-template-columns: minmax(0, 1fr) clamp(132px, 18vw, 190px);
         gap: 10px;
-        height: calc(100dvh - 12px);
+        width: 100%;
+        height: 100% !important;
+        max-height: 100% !important;
         align-items: stretch !important;
         overflow: hidden;
     }
@@ -281,6 +310,8 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
         max-width: none !important;
         margin: 0 !important;
         padding: 0 !important;
+        height: 100%;
+        min-height: 0;
     }
 
     .tt-platter-area {
@@ -294,7 +325,7 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
 
     .tt-body {
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) minmax(280px, 34%);
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 34%);
         grid-template-rows: 100%;
         height: 100%;
         overflow: hidden;
@@ -315,7 +346,7 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 
     .tt-platter-base {
-        max-width: min(320px, calc(46vw - 54px), calc(100dvh - 72px));
+        max-width: min(320px, calc(46vw - 54px), calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 60px));
     }
 
     .tonearm-assembly {
@@ -412,5 +443,170 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     .tape-thumb:hover::before,
     .tape-thumb.active::before {
         transform: translateY(-50%) !important;
+    }
+}
+
+/* === 更小的橫式手機（iPhone SE / Galaxy S22 / 折疊機）=== */
+@media (orientation: landscape) and (max-height: 420px) {
+    .app {
+        padding-top: max(4px, env(safe-area-inset-top)) !important;
+        padding-bottom: max(4px, env(safe-area-inset-bottom)) !important;
+    }
+
+    #radio {
+        grid-template-columns: minmax(0, 1fr) clamp(110px, 15vw, 150px);
+        gap: 6px;
+    }
+
+    .tt-body {
+        grid-template-columns: minmax(0, 1fr) minmax(220px, 36%);
+    }
+
+    .tt-platter-area {
+        padding: 6px 32px 6px 8px !important;
+    }
+
+    .tt-platter-base {
+        max-width: min(280px, calc(48vw - 44px), calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 40px));
+    }
+
+    .tonearm-assembly {
+        top: 12px;
+        right: 4px;
+        transform: scale(0.55);
+    }
+
+    .tonearm-assembly.playing {
+        transform: scale(0.55) rotate(28deg);
+    }
+
+    .tt-controls {
+        padding: 6px !important;
+        gap: 5px !important;
+    }
+
+    .tt-brand {
+        padding: 3px 6px;
+    }
+
+    .tt-brand-en {
+        font-size: 12px;
+        letter-spacing: 3px;
+    }
+
+    .tt-brand-zh {
+        font-size: 8px;
+        margin-top: 1px;
+    }
+
+    .display-box {
+        padding: 5px 8px;
+    }
+
+    .display-track {
+        font-size: 13px;
+    }
+
+    .display-status {
+        font-size: 9px;
+        margin-top: 2px;
+    }
+
+    .knob-row {
+        padding: 0 4px;
+    }
+
+    .knob {
+        width: 30px;
+        height: 30px;
+    }
+
+    .knob-dot {
+        height: 6px;
+        top: 4px;
+        transform-origin: 50% 11px;
+    }
+
+    .knob-lbl {
+        font-size: 8px;
+    }
+
+    .tt-buttons {
+        gap: 4px !important;
+    }
+
+    .btn {
+        min-height: 30px;
+        padding: 3px;
+    }
+
+    .btn-ico {
+        font-size: 13px;
+    }
+
+    .vu-wrap {
+        min-height: 26px;
+        padding: 4px 8px !important;
+        gap: 6px !important;
+    }
+
+    .vu-bars {
+        height: 14px;
+        gap: 3px;
+    }
+
+    .vu-lbl {
+        font-size: 8px;
+    }
+
+    .record-crate {
+        padding: 6px !important;
+    }
+
+    .crate-hdr {
+        font-size: 10px;
+        letter-spacing: 1px;
+        margin-bottom: 4px !important;
+    }
+
+    .record-shelf {
+        gap: 12px !important;
+        padding: 4px 4px 8px;
+    }
+
+    .tape-thumb {
+        width: clamp(54px, 14dvh, 64px);
+        height: clamp(54px, 14dvh, 64px);
+    }
+
+    .tape-thumb::before {
+        width: calc(clamp(54px, 14dvh, 64px) - 8px);
+        height: calc(clamp(54px, 14dvh, 64px) - 8px);
+        right: -18px;
+    }
+
+    .tape-thumb-ttl {
+        font-size: 9px;
+    }
+}
+
+/* === 較窄的橫式手機（aspect ratio 很寬，如折疊機外屏 884x344）=== */
+@media (orientation: landscape) and (max-height: 380px) {
+    .tt-body {
+        grid-template-columns: minmax(0, 1fr) minmax(200px, 38%);
+    }
+
+    .tt-platter-base {
+        max-width: min(240px, calc(50vw - 40px), calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 32px));
+    }
+
+    .tonearm-assembly {
+        transform: scale(0.5);
+        top: 8px;
+        right: 2px;
+    }
+
+    .tonearm-assembly.playing {
+        transform: scale(0.5) rotate(28deg);
     }
 }
