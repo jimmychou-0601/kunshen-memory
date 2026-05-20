@@ -276,13 +276,88 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 }
 
-/* === 直式手機：下半部 UI 全部置中、等寬對齊 === */
+/* === 直式手機：參考圖位置 + 正圓比例 === */
 @media (max-width: 991.98px) and (orientation: portrait) {
+    .app {
+        padding-top: max(8px, env(safe-area-inset-top)) !important;
+        padding-bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        padding-left: max(6px, env(safe-area-inset-left)) !important;
+        padding-right: max(6px, env(safe-area-inset-right)) !important;
+        align-items: center !important;
+    }
+
+    #radio {
+        width: 100% !important;
+        max-width: min(390px, calc(100vw - 12px)) !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        overflow: visible;
+    }
+
+    #radio > .col-12 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    #radio > .col-12:first-child {
+        margin-bottom: 14px !important;
+    }
+
+    .tt-body {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto minmax(0, 1fr) !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: min(760px, calc(100svh - 18px));
+        overflow: hidden;
+    }
+
+    .tt-platter-area {
+        min-height: 0;
+        padding: 14px 42px 18px 12px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        overflow: visible;
+    }
+
+    .tt-platter-base {
+        width: min(300px, calc(100vw - 96px));
+        max-width: none;
+        aspect-ratio: 1 / 1;
+        flex: 0 0 auto;
+    }
+
+    .record-spinner,
+    .record {
+        aspect-ratio: 1 / 1;
+    }
+
+    .spindle {
+        left: calc(50% - 15px);
+    }
+
+    .tonearm-assembly {
+        top: 34px;
+        right: 20px;
+        transform: scale(0.82);
+        transform-origin: 30px 40px;
+    }
+
+    .tonearm-assembly.playing {
+        transform: scale(0.82) rotate(38deg);
+    }
+
     .tt-controls {
         justify-content: center !important;
         align-items: stretch !important;
         gap: 12px !important;
         padding: 14px !important;
+        min-height: 0;
     }
 
     /* 所有子元素一律全寬，邊距由 .tt-controls 統一控制 */
