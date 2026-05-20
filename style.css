@@ -276,38 +276,45 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 }
 
-/* === 直式手機：按鈕 2x2 真・滿版（拿掉容器 padding）=== */
+/* === 直式手機：下半部 UI 全部置中、等寬對齊 === */
 @media (max-width: 991.98px) and (orientation: portrait) {
     .tt-controls {
         justify-content: center !important;
+        align-items: stretch !important;
         gap: 12px !important;
-        padding-top: 14px !important;
-        padding-bottom: 14px !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
+        padding: 14px !important;
     }
 
-    /* 其他元素保留左右邊距，僅按鈕滿版 */
+    /* 所有子元素一律全寬，邊距由 .tt-controls 統一控制 */
     .tt-controls > .tt-brand,
     .tt-controls > .display-box,
     .tt-controls > .knob-row,
+    .tt-controls > .tt-buttons,
     .tt-controls > .vu-wrap {
-        margin-left: 14px !important;
-        margin-right: 14px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        box-sizing: border-box !important;
+        align-self: stretch !important;
+    }
+
+    /* 旋鈕排列在自身範圍內均分 */
+    .knob-row {
+        display: flex !important;
+        justify-content: space-around !important;
     }
 
     .tt-buttons {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
-        grid-template-rows: 60px 60px !important;
+        grid-template-rows: 56px 56px !important;
         grid-template-areas: "prev next" "play eject" !important;
-        gap: 6px !important;
+        gap: 8px !important;
         align-content: start !important;
-        width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
         height: auto !important;
         min-height: 0 !important;
+        padding: 0 !important;
         flex: 0 0 auto !important;
     }
 
@@ -323,7 +330,6 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
         max-height: none !important;
         padding: 10px !important;
         margin: 0 !important;
-        border-radius: 0 !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
@@ -331,7 +337,7 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 
     .tt-buttons .btn-ico {
-        font-size: 24px !important;
+        font-size: 22px !important;
         line-height: 1 !important;
     }
 }
