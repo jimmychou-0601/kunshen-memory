@@ -305,13 +305,18 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
         justify-content: space-around !important;
     }
 
+    /* 按鈕 2x2 grid，4 顆完全等寬等高 */
     .tt-buttons {
         display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
         grid-template-rows: 56px 56px !important;
         grid-template-areas: "prev next" "play eject" !important;
-        gap: 8px !important;
+        column-gap: 10px !important;
+        row-gap: 10px !important;
         align-content: start !important;
+        justify-content: stretch !important;
+        align-items: stretch !important;
+        justify-items: stretch !important;
         height: auto !important;
         min-height: 0 !important;
         padding: 0 !important;
@@ -323,22 +328,32 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     #btnPlay { grid-area: play; }
     #btnEject { grid-area: eject; }
 
-    .tt-buttons .btn {
+    /* 4 顆按鈕統一外觀 + 圖示置中 */
+    .tt-buttons .btn,
+    .tt-buttons .btn-play,
+    .tt-buttons .btn-eject {
         width: 100% !important;
         height: 100% !important;
+        min-width: 0 !important;
         min-height: 0 !important;
+        max-width: none !important;
         max-height: none !important;
-        padding: 10px !important;
+        padding: 0 !important;
         margin: 0 !important;
+        box-sizing: border-box !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         flex: 0 0 auto !important;
+        border-radius: 4px !important;
     }
 
     .tt-buttons .btn-ico {
-        font-size: 22px !important;
+        font-size: 24px !important;
         line-height: 1 !important;
+        text-align: center !important;
+        display: inline-block !important;
+        transform: translateX(0) !important;
     }
 }
 
