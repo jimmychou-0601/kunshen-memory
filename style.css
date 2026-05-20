@@ -276,13 +276,17 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     }
 }
 
-/* === 直式手機：按鈕 2x2 對齊排列 === */
+/* === 直式手機：按鈕 2x2 滿版 + 內容置中 === */
 @media (max-width: 991.98px) and (orientation: portrait) {
     .tt-buttons {
+        width: 100% !important;
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
         grid-template-areas: "prev next" "play eject" !important;
         gap: 10px !important;
+        justify-items: stretch !important;
+        align-items: stretch !important;
+        margin: 0 !important;
     }
 
     #btnRew { grid-area: prev; }
@@ -290,8 +294,18 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
     #btnPlay { grid-area: play; }
     #btnEject { grid-area: eject; }
 
-    .btn {
-        min-height: 48px !important;
+    .tt-buttons .btn {
+        width: 100% !important;
+        min-height: 56px !important;
+        padding: 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .tt-buttons .btn-ico {
+        font-size: 22px !important;
+        line-height: 1 !important;
     }
 }
 
@@ -404,9 +418,20 @@ html, body { width: 100%; min-height: 100%; overflow-x: hidden; overflow-y: auto
         height: 36px;
     }
 
-    .btn {
-        min-height: 38px;
+    .tt-buttons {
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 6px !important;
+    }
+
+    .tt-buttons .btn {
+        width: 100% !important;
+        min-height: 40px;
         padding: 5px;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
 
     .vu-wrap {
